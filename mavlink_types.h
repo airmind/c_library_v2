@@ -162,12 +162,22 @@ typedef struct __mavlink_message_info {
 #define mavlink_ck_b(msg) *(((msg)->len+(uint16_t)1) + (uint8_t *)_MAV_PAYLOAD_NON_CONST(msg))
 
 typedef enum {
-    MAVLINK_COMM_0,
-    MAVLINK_COMM_1,
-    MAVLINK_COMM_2,
-    MAVLINK_COMM_3
+    MAVLINK_BACKHAUL,
+    MAVLINK_BLE_1,
+    MAVLINK_BLE_2,
+    MAVLINK_BLE_3,
+    MAVLINK_BLE_4,
+    MAVLINK_BLE_5,
+    MAVLINK_BLE_6
+        
+        /*
+         MAVLINK_COMM_0,
+         MAVLINK_COMM_1,
+         MAVLINK_COMM_2,
+         MAVLINK_COMM_3
+         */
 } mavlink_channel_t;
-
+    
 /*
  * applications can set MAVLINK_COMM_NUM_BUFFERS to the maximum number
  * of buffers they will use. If more are used, then the result will be
@@ -177,7 +187,7 @@ typedef enum {
 #if (defined linux) | (defined __linux) | (defined  __MACH__) | (defined _WIN32)
 # define MAVLINK_COMM_NUM_BUFFERS 16
 #else
-# define MAVLINK_COMM_NUM_BUFFERS 4
+# define MAVLINK_COMM_NUM_BUFFERS 7
 #endif
 #endif
 
