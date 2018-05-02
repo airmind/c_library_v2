@@ -269,12 +269,12 @@ MAVLINK_HELPER uint16_t mavlink_finalize_message_chan(mavlink_message_t* msg, ui
 }
 
 /**
- * @brief Finalize a MAVLink message with MAVLINK_BACKHAUL as default channel
+ * @brief Finalize a MAVLink message with MAVLINK_COMM_0 as default channel
  */
 MAVLINK_HELPER uint16_t mavlink_finalize_message(mavlink_message_t* msg, uint8_t system_id, uint8_t component_id,
 						 uint8_t min_length, uint8_t length, uint8_t crc_extra)
 {
-    return mavlink_finalize_message_chan(msg, system_id, component_id, MAVLINK_BACKHAUL, min_length, length, crc_extra);
+    return mavlink_finalize_message_chan(msg, system_id, component_id, MAVLINK_COMM_0, min_length, length, crc_extra);
 }
 
 static inline void _mav_parse_error(mavlink_status_t *status)
