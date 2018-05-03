@@ -269,12 +269,12 @@ MAVLINK_HELPER uint16_t mavlink_finalize_message_chan(mavlink_message_t* msg, ui
 }
 
 /**
- * @brief Finalize a MAVLink message with MAVLINK_COMM_0 as default channel
+ * @brief Finalize a MAVLink message with MAVLINK_BACKHAUL as default channel
  */
 MAVLINK_HELPER uint16_t mavlink_finalize_message(mavlink_message_t* msg, uint8_t system_id, uint8_t component_id,
 						 uint8_t min_length, uint8_t length, uint8_t crc_extra)
 {
-    return mavlink_finalize_message_chan(msg, system_id, component_id, MAVLINK_COMM_0, min_length, length, crc_extra);
+    return mavlink_finalize_message_chan(msg, system_id, component_id, MAVLINK_BACKHAUL, min_length, length, crc_extra);
 }
 
 static inline void _mav_parse_error(mavlink_status_t *status)
@@ -290,7 +290,7 @@ MAVLINK_HELPER void _mavlink_send_uart(mavlink_channel_t chan, const char *buf, 
      */
     MAVLINK_HELPER void _mav_finalize_tunneling_message_chan_send(mavlink_channel_t chan, uint32_t msgid,
                                                                   char *packet_buf,
-                                                                  uint8_t min_length, int length, uint8_t crc_extra, uint8_t* payload_bytes)
+                                                                  uint8_t min_length, int length, uint8_t crc_extra, uint8_t* payload)
     {
         uint16_t checksum;
         uint8_t buf[MAVLINK_NUM_HEADER_BYTES];
@@ -365,7 +365,7 @@ MAVLINK_HELPER void _mavlink_send_uart(mavlink_channel_t chan, const char *buf, 
         
         //_mav_put_uint8_t_array(packet_buf, 5, payload_msg, buf[1]);
         //mav_array_memcpy(packet_buf+5, payload_msg, buf[1]);
-        memcpy(packet_buf+5, payload_bytes, buf[1]);
+        memcpy(packet_buf+5, payload, buf[1]);
         
         status->current_tx_seq++;
         checksum = crc_calculate((const uint8_t*)&buf[1], header_len);
@@ -429,7 +429,7 @@ MAVLINK_HELPER void _mavlink_send_uart(mavlink_channel_t chan, const char *buf, 
             packet_buf[4] = 0;
             //_mav_put_uint8_t_array(packet_buf, 6, payload_msg + 255, buf[1]);
             //mav_array_memcpy(packet_buf+5, payload_msg + 255, buf[1]);
-            memcpy(packet_buf+5, payload_bytes + 250, buf[1]);
+            memcpy(packet_buf+5, payload + 250, buf[1]);
             
             status->current_tx_seq++;
             checksum = crc_calculate((const uint8_t*)&buf[1], header_len);
