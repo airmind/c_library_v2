@@ -171,13 +171,35 @@ static inline void mavlink_msg_dronetag_tunneling_send(mavlink_channel_t chan, u
 }
 
 /**
- * @brief Send a drone tag tunneling message
+ * @brief Tunnelize and serialize received wire steam in wire format to a buffer for sending
+ * @param chan MAVLink channel to send the message
+ * @param payload The payload bytes to send
+ * @param payload_len payload byte length
+ * Note: use this function to save multiple copies between internal buffers;
+ */
+static inline uint16_t mavlink_msg_dronetag_tunneling_send_payload_wire_to_buffer(uint8_t* ext_buf, mavlink_channel_t chan, uint8_t target_network, uint16_t target_system, uint16_t target_component, uint8_t *payload, int payload_len)
+{
+    uint8_t tunnel_header[5];
+#if MAVLINK_NEED_BYTE_SWAP || !MAVLINK_ALIGNED_FIELDS
+    _mav_put_uint16_t(tunnel_header, 0, target_system);
+    _mav_put_uint16_t(tunnel_header, 2, target_component);
+    return _mav_finalize_tunneling_message_chan_to_buffer(chan, MAVLINK_MSG_ID_DRONETAG_TUNNEL, tunnel_header, (char*)ext_buf, MAVLINK_MSG_ID_DRONETAG_TUNNEL_MIN_LEN, payload_len, MAVLINK_MSG_ID_DRONETAG_TUNNEL_CRC, payload);
+#else
+    memcpy(tunnel_header, (uint8_t*)&target_system, 2);
+    memcpy(tunnel_header+2, (uint8_t*)&target_component+2, 2);
+    
+    return _mav_finalize_tunneling_message_chan_to_buffer(chan, MAVLINK_MSG_ID_DRONETAG_TUNNEL, tunnel_header, (char*)ext_buf, MAVLINK_MSG_ID_DRONETAG_TUNNEL_MIN_LEN, payload_len, MAVLINK_MSG_ID_DRONETAG_TUNNEL_CRC, payload);
+#endif
+}
+
+/**
+ * @brief Send received byte steam in wire format in a drone tag tunneling message
  * @param chan MAVLink channel to send the message
  * @param payload The payload bytes to send
  * @param payload_len payload byte length
  *
  */
-static inline void mavlink_msg_dronetag_tunneling_send_payload_buffer(mavlink_channel_t chan, uint8_t target_network, uint8_t target_system, uint8_t target_component, uint8_t *payload, int payload_len)
+static inline void mavlink_msg_dronetag_tunneling_send_payload_wire(mavlink_channel_t chan, uint8_t target_network, uint8_t target_system, uint8_t target_component, uint8_t *payload, int payload_len)
 {
 #if MAVLINK_NEED_BYTE_SWAP || !MAVLINK_ALIGNED_FIELDS
     mavlink_msg_dronetag_tunneling_send(chan, target_network, target_system, target_component, payload, payload_len);
@@ -314,7 +336,7 @@ static inline uint16_t mavlink_msg_dronetag_tunnel_get_chan_payload_non_copy(mav
     }
 
     *payload = (uint8_t*)(msg_buf + wire_offset + 5); //jump over the target system id and comp id;
-    return *(msg_buf + 1);
+    return *(msg_buf + 1) - 5;
 }
 
 
