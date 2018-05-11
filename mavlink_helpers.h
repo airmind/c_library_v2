@@ -365,7 +365,7 @@ MAVLINK_HELPER void _mavlink_send_uart(mavlink_channel_t chan, const char *buf, 
         
         //_mav_put_uint8_t_array(packet_buf, 5, payload_msg, buf[1]);
         //mav_array_memcpy(packet_buf+5, payload_msg, buf[1]);
-        memcpy(packet_buf+5, payload, buf[1]);
+        memcpy(packet_buf+5, payload, buf[1]-5);
         
         status->current_tx_seq++;
         checksum = crc_calculate((const uint8_t*)&buf[1], header_len);
@@ -429,7 +429,7 @@ MAVLINK_HELPER void _mavlink_send_uart(mavlink_channel_t chan, const char *buf, 
             packet_buf[4] = 0;
             //_mav_put_uint8_t_array(packet_buf, 6, payload_msg + 255, buf[1]);
             //mav_array_memcpy(packet_buf+5, payload_msg + 255, buf[1]);
-            memcpy(packet_buf+5, payload + 250, buf[1]);
+            memcpy(packet_buf+5, payload + 250, buf[1]-5);
             
             status->current_tx_seq++;
             checksum = crc_calculate((const uint8_t*)&buf[1], header_len);
