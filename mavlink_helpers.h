@@ -1478,7 +1478,7 @@ MAVLINK_HELPER uint8_t put_bitfield_n_by_index(int32_t b, uint8_t bits, uint8_t 
 
 void comm_send_ch(mavlink_channel_t chan, uint8_t ch)
 {
-    if (chan == MAVLINK_BACKHAUL)
+    if (chan == MAVLINK_COMM_0)
     {
         uart0_transmit(ch);
     }
