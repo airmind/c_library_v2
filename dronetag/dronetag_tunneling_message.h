@@ -149,7 +149,7 @@ static inline uint16_t mavlink_msg_dronetag_tunneling_encode_chan(uint8_t system
  * @param payload Variable length payload. The length is defined by the remaining message length when subtracting the header and other fields.  The entire content of this block is opaque unless you understand any the encoding message_type.  The particular encoding used can be extension specific and might not always be documented as part of the mavlink specification.
  */
 #ifdef MAVLINK_USE_CONVENIENCE_FUNCTIONS
-
+/*
 static inline void mavlink_msg_dronetag_tunneling_send(mavlink_channel_t chan, uint8_t target_network, uint8_t target_system, uint8_t target_component, uint8_t *payload, int payload_len)
 {
 #if MAVLINK_NEED_BYTE_SWAP || !MAVLINK_ALIGNED_FIELDS
@@ -169,6 +169,7 @@ static inline void mavlink_msg_dronetag_tunneling_send(mavlink_channel_t chan, u
     _mav_finalize_tunneling_message_chan_send(chan, MAVLINK_MSG_ID_DRONETAG_TUNNEL, (char*)&packet, MAVLINK_MSG_ID_DRONETAG_TUNNEL_MIN_LEN, payload_len, MAVLINK_MSG_ID_DRONETAG_TUNNEL_CRC, payload);
 #endif
 }
+*/
 
 /**
  * @brief Tunnelize and serialize received wire steam in wire format to a buffer for sending
@@ -186,7 +187,7 @@ static inline uint16_t mavlink_msg_dronetag_tunneling_send_payload_wire_to_buffe
     return _mav_finalize_tunneling_message_chan_to_buffer(chan, MAVLINK_MSG_ID_DRONETAG_TUNNEL, tunnel_header, (char*)ext_buf, MAVLINK_MSG_ID_DRONETAG_TUNNEL_MIN_LEN, payload_len, MAVLINK_MSG_ID_DRONETAG_TUNNEL_CRC, payload);
 #else
     memcpy(tunnel_header, (uint8_t*)&target_system, 2);
-    memcpy(tunnel_header+2, (uint8_t*)&target_component+2, 2);
+    memcpy(tunnel_header+2, (uint8_t*)&target_component, 2);
     
     return _mav_finalize_tunneling_message_chan_to_buffer(chan, MAVLINK_MSG_ID_DRONETAG_TUNNEL, tunnel_header, (char*)ext_buf, MAVLINK_MSG_ID_DRONETAG_TUNNEL_MIN_LEN, payload_len, MAVLINK_MSG_ID_DRONETAG_TUNNEL_CRC, payload);
 #endif
@@ -199,6 +200,7 @@ static inline uint16_t mavlink_msg_dronetag_tunneling_send_payload_wire_to_buffe
  * @param payload_len payload byte length
  *
  */
+/*
 static inline void mavlink_msg_dronetag_tunneling_send_payload_wire(mavlink_channel_t chan, uint8_t target_network, uint8_t target_system, uint8_t target_component, uint8_t *payload, int payload_len)
 {
 #if MAVLINK_NEED_BYTE_SWAP || !MAVLINK_ALIGNED_FIELDS
@@ -212,26 +214,27 @@ static inline void mavlink_msg_dronetag_tunneling_send_payload_wire(mavlink_chan
     _mav_finalize_tunneling_message_chan_send(chan, MAVLINK_MSG_ID_DRONETAG_TUNNEL, (char *)&packet, MAVLINK_MSG_ID_DRONETAG_TUNNEL_MIN_LEN, payload_len, MAVLINK_MSG_ID_DRONETAG_TUNNEL_CRC, payload);
 #endif
 }
+*/
 
 /**
  * @brief Send a drone tag tunneling message
  * @param chan MAVLink channel to send the message
  * @param payload_msg The MAVLink message struct as payload to serialize
  * @param payload_msg_size size of payload message struct
- * Note the first 2 bytes of checksum in mavlink message struct needs to be ignored
+ * Note this method is not intended to be used with non-blocking uart send mode;
  */
 static inline void mavlink_msg_dronetag_tunneling_send_payload_msg(mavlink_channel_t chan, uint8_t target_network, uint8_t target_system, uint8_t target_component, mavlink_message_t *payload_msg, int payload_msg_size)
 {
-#if MAVLINK_NEED_BYTE_SWAP || !MAVLINK_ALIGNED_FIELDS
-    mavlink_msg_dronetag_tunneling_send(chan, target_network, target_system, target_component, (uint8_t*)(payload_msg+2), payload_msg_size-2);
-#else
-    mavlink_dronetag_tunneling_t packet;
-    //packet.target_network = target_network;
-    packet.target_system = target_system;
-    packet.target_component = target_component;
-
-    _mav_finalize_tunneling_message_chan_send(chan, MAVLINK_MSG_ID_DRONETAG_TUNNEL, (char *)&packet, MAVLINK_MSG_ID_DRONETAG_TUNNEL_MIN_LEN, payload_msg_size-2, MAVLINK_MSG_ID_DRONETAG_TUNNEL_CRC, (uint8_t*)(payload_msg+2));
-#endif
+    uint8_t tunnel_header[5];
+    uint8_t payload_buf[MAVLINK_MSG_ID_DRONETAG_TUNNEL_LEN];
+    //serialize msg structure to buffer;
+    uint16_t msg_size = mavlink_msg_to_send_buffer(payload_buf, payload_msg);
+    
+    _mav_put_uint16_t(tunnel_header, 0, target_system);
+    _mav_put_uint16_t(tunnel_header, 2, target_component);
+    _mav_finalize_tunneling_message_chan_send(chan, MAVLINK_MSG_ID_DRONETAG_TUNNEL, MAVLINK_MSG_ID_DRONETAG_TUNNEL_MIN_LEN, msg_size, MAVLINK_MSG_ID_DRONETAG_TUNNEL_CRC, tunnel_header, payload_buf);
+ 
+    printf("%02X. %02X\n", target_system, target_component);
 }
 
 #if MAVLINK_MSG_ID_DRONETAG_TUNNEL_LEN <= MAVLINK_MAX_PAYLOAD_LEN
