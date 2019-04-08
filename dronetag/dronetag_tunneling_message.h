@@ -233,8 +233,6 @@ static inline void mavlink_msg_dronetag_tunneling_send_payload_msg(mavlink_chann
     _mav_put_uint16_t(tunnel_header, 0, target_system);
     _mav_put_uint16_t(tunnel_header, 2, target_component);
     _mav_finalize_tunneling_message_chan_send(chan, MAVLINK_MSG_ID_DRONETAG_TUNNEL, MAVLINK_MSG_ID_DRONETAG_TUNNEL_MIN_LEN, msg_size, MAVLINK_MSG_ID_DRONETAG_TUNNEL_CRC, tunnel_header, payload_buf);
- 
-    printf("%02X. %02X\n", target_system, target_component);
 }
 
 #if MAVLINK_MSG_ID_DRONETAG_TUNNEL_LEN <= MAVLINK_MAX_PAYLOAD_LEN
@@ -320,7 +318,8 @@ static inline uint16_t mavlink_msg_dronetag_tunnel_get_message_type(const mavlin
  */
 static inline uint16_t mavlink_msg_dronetag_tunnel_get_payload(const mavlink_message_t* msg, uint8_t *payload)
 {
-    return _MAV_RETURN_uint8_t_array(msg, payload, msg->len,  5);
+    //return the size of tunneled message, not include tunnel header;
+    return _MAV_RETURN_uint8_t_array(msg, payload, msg->len - 5,  5);
 }
 
 /**
