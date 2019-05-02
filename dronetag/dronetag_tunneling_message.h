@@ -53,13 +53,13 @@ typedef struct /*MAVLINK_PACKED*/__attribute__((__packed__)) __mavlink_dronetag_
  * @return length of the message in bytes (excluding serial stream start sign)
  */
 static inline uint16_t mavlink_msg_dronetag_tunneling_pack(uint8_t system_id, uint8_t component_id, mavlink_message_t* msg,
-                                                     uint8_t target_network, uint8_t target_system, uint8_t target_component, const uint8_t *payload)
+                                                     uint8_t target_network, uint16_t target_system, uint16_t target_component, const uint8_t *payload)
 {
 #if MAVLINK_NEED_BYTE_SWAP || !MAVLINK_ALIGNED_FIELDS
     char buf[MAVLINK_MSG_ID_DRONETAG_TUNNEL_LEN];
     //_mav_put_uint8_t(buf, 2, target_network);
-    _mav_put_uint8_t(buf, 3, target_system);
-    _mav_put_uint8_t(buf, 4, target_component);
+    _mav_put_uint16_t(buf, 0, target_system);
+    _mav_put_uint16_t(buf, 2, target_component);
     _mav_put_uint8_t_array(buf, 5, payload, 267);
     memcpy(_MAV_PAYLOAD_NON_CONST(msg), buf, MAVLINK_MSG_ID_DRONETAG_TUNNEL_LEN);
 #else
@@ -86,15 +86,15 @@ static inline uint16_t mavlink_msg_dronetag_tunneling_pack(uint8_t system_id, ui
  * @param payload message to be tunneled as payload
  * @return length of the message in bytes (excluding serial stream start sign)
  */
-static inline uint16_t mavlink_msg_dronetag_tunneling_pack_chan(uint8_t system_id, uint8_t component_id, uint8_t chan,
+static inline uint16_t mavlink_msg_dronetag_tunneling_pack_chan(uint8_t system_id, uint8_t component_id, mavlink_channel_t chan,
                                                           mavlink_message_t* msg,
-                                                          uint8_t target_network,uint8_t target_system,uint8_t target_component,const uint8_t *payload)
+                                                          uint8_t target_network,uint16_t target_system,uint16_t target_component,const uint8_t *payload)
 {
 #if MAVLINK_NEED_BYTE_SWAP || !MAVLINK_ALIGNED_FIELDS
     char buf[MAVLINK_MSG_ID_DRONETAG_TUNNEL_LEN];
     //_mav_put_uint8_t(buf, 2, target_network);
-    _mav_put_uint8_t(buf, 3, target_system);
-    _mav_put_uint8_t(buf, 4, target_component);
+    _mav_put_uint8_t(buf, 0, target_system);
+    _mav_put_uint8_t(buf, 2, target_component);
     _mav_put_uint8_t_array(buf, 5, payload, 249);
     memcpy(_MAV_PAYLOAD_NON_CONST(msg), buf, MAVLINK_MSG_ID_DRONETAG_TUNNEL_LEN);
 #else
@@ -132,7 +132,7 @@ static inline uint16_t mavlink_msg_dronetag_tunneling_encode(uint8_t system_id, 
  * @param msg The MAVLink message to compress the data into
  * @param v2_extension C-struct to read the message contents from
  */
-static inline uint16_t mavlink_msg_dronetag_tunneling_encode_chan(uint8_t system_id, uint8_t component_id, uint8_t chan, mavlink_message_t* msg, const mavlink_dronetag_tunneling_t* tunnel_message)
+static inline uint16_t mavlink_msg_dronetag_tunneling_encode_chan(uint8_t system_id, uint8_t component_id, mavlink_channel_t chan, mavlink_message_t* msg, const mavlink_dronetag_tunneling_t* tunnel_message)
 {
     return mavlink_msg_dronetag_tunneling_pack_chan(system_id, component_id, chan, msg, /*dronetag_tunneling->target_network*/0, tunnel_message->target_system, tunnel_message->target_component, tunnel_message->payload);
 }
@@ -223,7 +223,7 @@ static inline void mavlink_msg_dronetag_tunneling_send_payload_wire(mavlink_chan
  * @param payload_msg_size size of payload message struct
  * Note this method is not intended to be used with non-blocking uart send mode;
  */
-static inline void mavlink_msg_dronetag_tunneling_send_payload_msg(mavlink_channel_t chan, uint8_t target_network, uint8_t target_system, uint8_t target_component, mavlink_message_t *payload_msg, int payload_msg_size)
+static inline void mavlink_msg_dronetag_tunneling_send_payload_msg(mavlink_channel_t chan, uint8_t target_network, uint16_t target_system, uint16_t target_component, mavlink_message_t *payload_msg, int payload_msg_size)
 {
     uint8_t tunnel_header[5];
     uint8_t payload_buf[MAVLINK_MSG_ID_DRONETAG_TUNNEL_LEN];
@@ -296,7 +296,7 @@ static inline uint16_t mavlink_msg_dronetag_tunnel_get_target_system(const mavli
  *
  * @return Component ID (0 for broadcast)
  */
-static inline uint8_t mavlink_msg_dronetag_tunnel_get_target_component(const mavlink_message_t* msg)
+static inline uint16_t mavlink_msg_dronetag_tunnel_get_target_component(const mavlink_message_t* msg)
 {
     return _MAV_RETURN_uint16_t(msg,  2);
 }
