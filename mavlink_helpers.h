@@ -640,12 +640,11 @@ MAVLINK_HELPER uint16_t _mav_finalize_tunneling_message_chan_to_buffer(mavlink_c
     //copy tunnel header & payload to external buffer;
     memcpy(ext_buf+pos, tunnel_header, 5);
     pos += 5;
-    memcpy(ext_buf+pos, payload, buf[1]);
-    pos += buf[1];
+    memcpy(ext_buf+pos, payload, buf[1]-5);
+    pos += (buf[1]-5);
     
     status->current_tx_seq++;
-    checksum = crc_calculate((const uint8_t*)&buf[1], header_len);
-    crc_accumulate_buffer(&checksum, ext_buf, buf[1]);
+    checksum = crc_calculate((const uint8_t*)(ext_buf + 1), header_len + buf[1]);    
     crc_accumulate(crc_extra, &checksum);
     ck[0] = (uint8_t)(checksum & 0xFF);
     ck[1] = (uint8_t)(checksum >> 8);
@@ -724,12 +723,11 @@ MAVLINK_HELPER uint16_t _mav_finalize_tunneling_message_chan_to_buffer(mavlink_c
         //copy tunnel header & payload to external buffer;
         memcpy(ext_buf+pos, tunnel_header, 5);
         pos += 5;
-        memcpy(ext_buf+pos, payload, buf[1]);
-        pos += buf[1];
+        memcpy(ext_buf+pos, payload, buf[1]-5);
+        pos += (buf[1]-5);
         
         status->current_tx_seq++;
-        checksum = crc_calculate((const uint8_t*)&buf[1], header_len);
-        crc_accumulate_buffer(&checksum, ext_buf, buf[1]);
+        checksum = crc_calculate((const uint8_t*)(ext_buf + 1), header_len + buf[1]);
         crc_accumulate(crc_extra, &checksum);
         ck[0] = (uint8_t)(checksum & 0xFF);
         ck[1] = (uint8_t)(checksum >> 8);

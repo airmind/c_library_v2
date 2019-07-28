@@ -60,14 +60,14 @@ static inline uint16_t mavlink_msg_dronetag_tunneling_pack(uint8_t system_id, ui
     //_mav_put_uint8_t(buf, 2, target_network);
     _mav_put_uint16_t(buf, 0, target_system);
     _mav_put_uint16_t(buf, 2, target_component);
-    _mav_put_uint8_t_array(buf, 5, payload, 267);
+    _mav_put_uint8_t_array(buf, 5, payload, 250);
     memcpy(_MAV_PAYLOAD_NON_CONST(msg), buf, MAVLINK_MSG_ID_DRONETAG_TUNNEL_LEN);
 #else
     mavlink_dronetag_tunneling_t packet;
     //packet.target_network = target_network;
     packet.target_system = target_system;
     packet.target_component = target_component;
-    mav_array_memcpy(packet.payload, payload, sizeof(uint8_t)*267);
+    mav_array_memcpy(packet.payload, payload, sizeof(uint8_t)*250);
     memcpy(_MAV_PAYLOAD_NON_CONST(msg), &packet, MAVLINK_MSG_ID_DRONETAG_TUNNEL_LEN);
 #endif
     
@@ -95,14 +95,14 @@ static inline uint16_t mavlink_msg_dronetag_tunneling_pack_chan(uint8_t system_i
     //_mav_put_uint8_t(buf, 2, target_network);
     _mav_put_uint8_t(buf, 0, target_system);
     _mav_put_uint8_t(buf, 2, target_component);
-    _mav_put_uint8_t_array(buf, 5, payload, 249);
+    _mav_put_uint8_t_array(buf, 5, payload, 250);
     memcpy(_MAV_PAYLOAD_NON_CONST(msg), buf, MAVLINK_MSG_ID_DRONETAG_TUNNEL_LEN);
 #else
     mavlink_dronetag_tunneling_t packet;
     //packet.target_network = target_network;
     packet.target_system = target_system;
     packet.target_component = target_component;
-    mav_array_memcpy(packet.payload, payload, sizeof(uint8_t)*249);
+    mav_array_memcpy(packet.payload, payload, sizeof(uint8_t)*250);
     memcpy(_MAV_PAYLOAD_NON_CONST(msg), &packet, MAVLINK_MSG_ID_DRONETAG_TUNNEL_LEN);
 #endif
     
@@ -187,7 +187,7 @@ static inline uint16_t mavlink_msg_dronetag_tunneling_send_payload_wire_to_buffe
     return _mav_finalize_tunneling_message_chan_to_buffer(chan, MAVLINK_MSG_ID_DRONETAG_TUNNEL, tunnel_header, (char*)ext_buf, MAVLINK_MSG_ID_DRONETAG_TUNNEL_MIN_LEN, payload_len, MAVLINK_MSG_ID_DRONETAG_TUNNEL_CRC, payload);
 #else
     memcpy(tunnel_header, (uint8_t*)&target_system, 2);
-    memcpy(tunnel_header+2, (uint8_t*)&target_component, 2);
+    memcpy(tunnel_header+2, (uint8_t*)&target_component+2, 2);
     
     return _mav_finalize_tunneling_message_chan_to_buffer(chan, MAVLINK_MSG_ID_DRONETAG_TUNNEL, tunnel_header, (char*)ext_buf, MAVLINK_MSG_ID_DRONETAG_TUNNEL_MIN_LEN, payload_len, MAVLINK_MSG_ID_DRONETAG_TUNNEL_CRC, payload);
 #endif
@@ -251,14 +251,14 @@ static inline void mavlink_msg_dronetag_tunneling_send_buf(mavlink_message_t *ms
     //_mav_put_uint8_t(buf, 2, target_network);
     _mav_put_uint8_t(buf, 3, target_system);
     _mav_put_uint8_t(buf, 4, target_component);
-    //_mav_put_uint8_t_array(buf, 5, payload, 249);
+    //_mav_put_uint8_t_array(buf, 5, payload, 250);
     _mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_DRONETAG_TUNNEL, buf, MAVLINK_MSG_ID_DRONETAG_TUNNEL_MIN_LEN, MAVLINK_MSG_ID_DRONETAG_TUNNEL_LEN, MAVLINK_MSG_ID_DRONETAG_TUNNEL_CRC, payload_msg);
 #else
     mavlink_dronetag_tunnel_t *packet = (mavlink_dronetag_tunnel_t *)msgbuf;
     //packet->target_network = target_network;
     packet->target_system = target_system;
     packet->target_component = target_component;
-    //mav_array_memcpy(packet->payload, payload, sizeof(uint8_t)*249);
+    //mav_array_memcpy(packet->payload, payload, sizeof(uint8_t)*250);
     _mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_DRONETAG_TUNNEL, (char *)packet, MAVLINK_MSG_ID_DRONETAG_TUNNEL_MIN_LEN, MAVLINK_MSG_ID_DRONETAG_TUNNEL_LEN, MAVLINK_MSG_ID_DRONETAG_TUNNEL_CRC, payload_msg);
 #endif
 }
